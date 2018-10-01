@@ -12,7 +12,7 @@ class App extends Component {
 
   componentDidMount() {
     fetch(
-      `https://unlikelycomputer.matthewgrill.com/jsonapi/node/photo_journal?include=${[
+      `https://unlikelycomputer.matthewgrill.com/jsonapi/node/photo_journal?sort=-created&include=${[
         'field_photos',
         'field_photo_journal_tags',
       ].join(',')}`,
