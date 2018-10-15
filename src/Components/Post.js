@@ -1,26 +1,27 @@
 import React, { Component, Fragment } from 'react';
 import { format } from 'date-fns';
 import { css } from 'emotion';
-import { Link } from 'react-router-dom';
-import { styles } from './Styles';
+// eslint-disable-next-line
+import globalStyles, { styles } from './Styles';
 
-class App extends Component {
+class Post extends Component {
   state = {
-    posts: null,
+    post: null,
     relationships: null,
   };
 
   componentDidMount() {
+    const { postID } = this.props.match.params;
     fetch(
-      `https://unlikelycomputer.matthewgrill.com/jsonapi/node/photo_journal?sort=-created&include=${[
+      `https://unlikelycomputer.matthewgrill.com/jsonapi/node/photo_journal/${postID}?sort=-created&include=${[
         'field_photos',
         'field_photo_journal_tags',
       ].join(',')}`,
     )
       .then(res => res.json())
-      .then(({ data: posts, included }) =>
+      .then(({ data: post, included }) =>
         this.setState({
-          posts,
+          post,
           relationships: included.reduce((acc, cv) => {
             acc[cv.type] = acc[cv.type] || {};
             acc[cv.type][cv.id] = cv;
@@ -42,7 +43,6 @@ class App extends Component {
     return (
       <article key={id}>
         <p className={styles.meta}>
-          <Link to={`/post/${id}`}>#</Link>{' '}
           {format(new Date(attributes.created), 'MM/DD/YYYY')}
           {' — '}
           {fieldTags.data
@@ -65,11 +65,11 @@ class App extends Component {
   };
 
   render() {
-    const { posts, relationships } = this.state;
+    const { post, relationships } = this.state;
     return (
       <Fragment>
-        {posts && relationships ? (
-          posts.map(post => this.buildPost(post))
+        {post && relationships ? (
+          this.buildPost(post)
         ) : (
           <p
             className={css`
@@ -84,4 +84,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Post;
